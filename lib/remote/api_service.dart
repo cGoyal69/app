@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../../models/user_model.dart';
 
 class ApiService {
-  static const baseUrl = 'https://jsonplaceholder.typicode.com/users';
+  static const baseUrl = 'http://10.0.2.2:3000/api/users/register';
 
   Future<Map<String, dynamic>> submitUser(UserModel user) async {
     try {
@@ -13,21 +13,26 @@ class ApiService {
         body: jsonEncode(user.toJson()),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final responseBody = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
         return {
           'success': true,
-          'data': UserModel.fromJson(jsonDecode(response.body)),
-          'message': 'User registered successfully!',
+          'data': UserModel.fromJson(responseBody['data']),
+          'message': responseBody['message'] ?? 'User registered successfully!'
         };
       } else {
         return {
           'success': false,
-          'message':
-              'Failed to register user. Status code: ${response.statusCode}',
+          'message': responseBody['message'] ?? 'Failed to register user',
+          'errors': responseBody['errors']
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Network error: ${e.toString()}'};
+      return {
+        'success': false,
+        'message': 'Network error: ${e.toString()}'
+      };
     }
   }
 }

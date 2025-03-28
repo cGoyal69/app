@@ -34,22 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() => _isLoading = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(result['message']),
-        backgroundColor: result['success'] ? Colors.green : Colors.red,
-      ),
-    );
-
     if (result['success']) {
-      _resetForm();
+      // Navigate to response screen with user data
+      Navigator.pushNamed(
+        context, 
+        '/response', 
+        arguments: result['data']
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
-  }
-
-  void _resetForm() {
-    _nameController.clear();
-    _emailController.clear();
-    _phoneController.clear();
   }
 
   @override
@@ -68,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 CustomTextField(
                   controller: _nameController,
                   label: 'Full Name',
-                  validator:
-                      (value) =>
-                          value!.isEmpty ? 'Please enter your name' : null,
+                  validator: (value) => value!.isEmpty 
+                    ? 'Please enter your name' 
+                    : null,
                 ),
                 SizedBox(height: 16),
                 CustomTextField(
@@ -80,11 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   validator: (value) {
                     if (value!.isEmpty) return 'Please enter an email';
                     final emailRegex = RegExp(
-                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
                     );
-                    return !emailRegex.hasMatch(value)
-                        ? 'Invalid email format'
-                        : null;
+                    return !emailRegex.hasMatch(value) 
+                      ? 'Invalid email format' 
+                      : null;
                   },
                 ),
                 SizedBox(height: 16),
@@ -95,13 +94,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   validator: (value) {
                     if (value!.isEmpty) return 'Please enter a phone number';
                     final phoneRegex = RegExp(r'^\+?[0-9]{10,14}$');
-                    return !phoneRegex.hasMatch(value)
-                        ? 'Invalid phone number'
-                        : null;
+                    return !phoneRegex.hasMatch(value) 
+                      ? 'Invalid phone number' 
+                      : null;
                   },
                 ),
                 SizedBox(height: 24),
-                ElevatedButton(onPressed: _submitForm, child: Text('Register')),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text('Register'),
+                ),
               ],
             ),
           ),
@@ -110,3 +112,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
